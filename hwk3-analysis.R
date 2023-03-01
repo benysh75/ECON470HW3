@@ -67,18 +67,18 @@ cigPrice <- cdc_tax_data %>%
   group_by(state) %>%
   summarise(diff_tax_dollar = diff(tax_dollar), diff_price_cpi = diff(price_cpi))
 
-cigPrice_high5state <- (cigPrice %>% arrange(desc(diff_price_cpi)) %>% head(5))$state
+cigPrice_high5state <- cigPrice %>% select(-diff_tax_dollar) %>% arrange(desc(diff_price_cpi)) %>% head(5)
+colnames(cigPrice_high5state) <- c("State", "Increases in Cigarette Prices")
 
 q3.data <- cdc_tax_data %>% 
-  filter(state %in% cigPrice_high5state) %>%
+  filter(state %in% cigPrice_high5state$State) %>%
   group_by(Year, state) %>%
   summarise(avg_sales_per_capita = mean(sales_per_capita))
 
 q3.plot <- q3.data %>%
   ggplot(aes(x = Year, y = avg_sales_per_capita, color = state)) + geom_point() + geom_line() +
-#  scale_color_manual(values = c("dodgerblue4", "dodgerblue1"), labels = c("Average Price", "Average Tax")) +
+  scale_color_manual(values = c("deepskyblue", "dodgerblue1", "dodgerblue3", "dodgerblue4", "darkblue"), labels = cigPrice_high5state$State) +
   scale_x_continuous(breaks = seq(1970, 2020, 5)) +
-#  geom_text(label = round(q2.data$avg_sales_per_capita,2), size = 2, nudge_x = 0, nudge_y = 0.25, check_overlap = TRUE) +
   labs(x = "Year", y = "Average Pack Sales per Capita", Title = "Average Pack Sales per Capita in Each Year for District of Columbia, New York, Rhode Island, Massachusetts, Connecticut from 1970 to 2019") +
   theme_bw() + theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank()) +
   theme(
@@ -89,7 +89,29 @@ q3.plot <- q3.data %>%
     axis.text.x = element_text(size = 10, angle = 0, color = "black"),
     axis.text.y = element_text(size = 10, angle = 0, color = "black"))
 
-## Question 4 States with Highest Increases in Cigarette Prices-----------------
+## Question 4 States with Lowest Increases in Cigarette Prices------------------
+
+cigPrice_low5state <- cigPrice %>% select(-diff_tax_dollar) %>% arrange(diff_price_cpi) %>% head(5)
+colnames(cigPrice_low5state) <- c("State", "Increases in Cigarette Prices")
+
+q4.data <- cdc_tax_data %>% 
+  filter(state %in% cigPrice_low5state$State) %>%
+  group_by(Year, state) %>%
+  summarise(avg_sales_per_capita = mean(sales_per_capita))
+
+q4.plot <- q4.data %>%
+  ggplot(aes(x = Year, y = avg_sales_per_capita, color = state)) + geom_point() + geom_line() +
+  scale_color_manual(values = c("deepskyblue", "dodgerblue1", "dodgerblue3", "dodgerblue4", "darkblue"), labels = cigPrice_high5state$State) +
+  scale_x_continuous(breaks = seq(1970, 2020, 5)) +
+  labs(x = "Year", y = "Average Pack Sales per Capita", Title = "Average Pack Sales per Capita in Each Year for Missouri, Tennessee, North Dakota, Alabama, Georgia from 1970 to 2019") +
+  theme_bw() + theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank()) +
+  theme(
+    plot.title = element_text(size = 12, color = "black", hjust = 0.5),
+    legend.title = element_text(size = 10, color = "black"),
+    legend.position = "top",
+    axis.title = element_text(size = 10, color = "black"),
+    axis.text.x = element_text(size = 10, angle = 0, color = "black"),
+    axis.text.y = element_text(size = 10, angle = 0, color = "black"))
 
 ## Save data for markdown ------------------------------------------------------
 
