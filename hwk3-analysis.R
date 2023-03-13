@@ -128,6 +128,7 @@ q4.plot <- q4.data %>%
 ## Question 5 Compare ----------------------------------------------------------
 
 q5.data <- cdc_tax_data %>% 
+  filter(Year %in% 1970:2018) %>%
   filter(state %in% cigPrice_low5state$State | state %in% cigPrice_high5state$State) %>%
   group_by(Year, state) %>%
   summarise(avg_sales_per_capita = mean(sales_per_capita)) %>%
